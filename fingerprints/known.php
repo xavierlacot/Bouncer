@@ -95,6 +95,7 @@ $known_fingerprints = array(
 '14387686ae699c119579e09342d35c65',  // IN - Windows XP - Explorer 6.0
 'b5f86f22b42c905d30ecd11d0e767bb1',  // FR - Windows XP - Explorer 8.0
 '98382a7339a5175ad37a386a5bf74b89',  // BR - Windows XP - Explorer 7.0
+'074512dab84a639c493fc34c966d8c19',  // KR - Windows XP - Explorer 7.0
 '98382a7339a5175ad37a386a5bf74b89',  // BR - Windows XP - Explorer 6.0
 // RSS
 '5b2361fdf1c6e31b99a55def5adfea6e',  // SimplePie/1.1.1 (Moonmoon)
