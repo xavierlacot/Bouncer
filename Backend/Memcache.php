@@ -26,8 +26,17 @@ class Bouncer_Backend_Memcache
         if (empty(self::$memcache)) {
             if (class_exists('Memcache')) {
                 $memcache = new Memcache();
+            } elseif (class_exists('Memcached')) {
+                $memcache = new Memcached();
+            }
+            if (isset($memcache)) {
                 foreach (self::$_servers as $server) {
-                    $memcache->addServer($server);
+                    $server = trim($server);
+                    if (strpos($server, ':')) {
+                        list($server, $port) = explode(':', $server);
+                    }
+                    $port = empty($port) ? 11211 : intval($port);
+                    $memcache->addServer($server, $port);
                 }
                 self::$memcache = $memcache;
             }
@@ -35,10 +44,21 @@ class Bouncer_Backend_Memcache
         return self::$memcache;
     }
 
+    public static function api()
+    {
+        $memcache = self::memcache();
+        if ($memcache instanceof Memcached) {
+            return 'memcached';
+        }
+        return 'memcache';
+    }
+
     public static function clean()
     {
         if (isset(self::$memcache)) {
-            self::$memcache->close();
+            if (self::api() == 'memcache') {
+                self::$memcache->close();
+            }
             self::$memcache = null;
         }
     }
@@ -68,7 +88,10 @@ class Bouncer_Backend_Memcache
             $key = self::$_prefix . '-' . $key;
         }
         self::$cache[$key] = $value;
-        return $memcache->set($key, $value, null, $expire);
+        if (self::api() == 'memcache') {
+            return $memcache->set($key, $value, null, $expire);
+        }
+        return $memcache->set($key, $value, $expire);
     }
 
     public static function indexAgent($agent, $namespace = '')
